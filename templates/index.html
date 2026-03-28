@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<header style="margin-top: 80px;">
+    <h1>AI Product Recommender</h1>
+    <p>Please log in or sign up to activate the personalized shopping experience.</p>
+    <div style="margin-top:40px;">
+        <a href="{{ url_for('login') }}" class="primary-btn" style="text-decoration:none; margin-right:15px;">Login</a>
+        <a href="{{ url_for('register') }}" class="primary-btn" style="text-decoration:none; background:transparent; border: 2px solid var(--primary);">Sign Up</a>
+    </div>
+</header>
+{% endblock %}

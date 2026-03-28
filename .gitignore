@@ -1,0 +1,15 @@
+__pycache__/
+venv/
+env/
+*.pkl
+*.sqlite3
+.env
+.idea/
+.vscode/
+
+# We ignore the text debugging files
+model_inspection.txt
+data_structure.txt
+setup_db_err.txt
+output_utf8.txt
+output.txt

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+
+<header>
+    <h1>Your Recommended Dashboard</h1>
+    <p>Discover products tailored for you, based on what similar users bought.</p>
+</header>
+
+<main>
+    <!-- Collaborative Filtering Recommendations -->
+    <section class="glass-panel">
+        <h2>Recommended For You</h2>
+        {% if collab_products %}
+        <p>Products purchased by users similar to you:</p>
+        <div class="results-grid">
+            {% for prod in collab_products %}
+            <a href="{{ url_for('view_product', stock_code=prod.id) }}" style="text-decoration:none;">
+                <div class="card">
+                    <div class="stock-code">{{ prod.id }}</div>
+                    <h3>{{ prod.name }}</h3>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>We need to learn more about you! Keep browsing or try linking a Customer ID (like 17850) to see personalized recommendations.</p>
+        {% endif %}
+    </section>
+
+    <!-- General Browsing/Catalog -->
+    <section class="glass-panel" style="margin-top: 40px;">
+        <h2>Browse Catalog</h2>
+        <p>Explore some recent items added to our store.</p>
+        
+        <div class="results-grid">
+            {% for p in recent_products %}
+            <a href="{{ url_for('view_product', stock_code=p.StockCode) }}" style="text-decoration:none;">
+                <div class="card">
+                    <div class="stock-code">{{ p.StockCode }}</div>
+                    <h3>{{ p.Description }}</h3>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+</main>
+{% endblock %}
