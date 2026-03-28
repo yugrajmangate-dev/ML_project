@@ -1,37 +1,46 @@
-# E-Commerce AI Recommendation Engine 🚀
+# E-Commerce Product Recommendation Engine
 
-This repository contains an end-to-end Machine Learning web application designed to recommend products to users based on an **E-Commerce Collaborative Filtering** and **Content-Based Filtering** model.
+Hi everyone! This is my project for building an E-Commerce Recommendation System. The goal was to build a system that actively suggests products to users based on their personal browsing history and preferences. 
 
-## 🛠️ Tech Stack
-- **Python**: Core logic programming language.
-- **Scikit-learn / Pandas**: For building the similarity matrices and handling dataframes dynamically.
-- **Flask**: The backend framework to serve API endpoints cleanly.
-- **MySQL (Flask-SQLAlchemy / PyMySQL)**: A fully integrated SQL database that stores real user account details, product histories, and the active catalog.
-- **HTML / CSS / JS**: A premium Glassmorphism-themed frontend interface.
-- **AWS Deployment Ready**: Scalable cloud production setup guides generated.
+## Problem Statement
+The assignment required building a recommendation engine that dynamically suggests products to users. The required tech stack was:
+- Python
+- Flask / Django (I went with Flask!)
+- MySQL
+- Scikit-learn
+- AWS / GCP
 
-## 📦 Features Implemented
-1. **Model Dual-Engine Recommendations**:
-   * **Collaborative Filtering**: Suggests items based on historical purchase similarities between the logged-in User and other matching neighbors from our dataset.
-   * **Content-Based Filtering**: Suggests items that mathematically resemble the *item currently being viewed* based on TF-IDF word vector analysis of product descriptions.
-2. **User Authentication & Profile Simulator**: 
-   * Fully hashed BCrypt login system mapped to MySQL. Users can log in and browse products to naturally generate historical "views".
-3. **Automated DB Population Strategy**: Uses a dynamic `setup_db.py` script that acts as an ETL (Extract, Transform, Load) to automatically suck the 3,665 real product entries directly from the Pandas Pickle object into the MySQL backend.
+## What I Built
+To solve this, I designed a **Hybrid Recommendation Engine** that uses two different machine learning approaches to cover all bases:
 
-## 🏃 How to Run Locally
+1. **Collaborative Filtering (User-Based):** When a user logs in, the system checks their purchase history in the MySQL database and compares it against a matrix of other users. If "User A" is similar to the logged-in user, the system recommends things "User A" bought that the logged-in user hasn't seen yet.
+2. **Content-Based Filtering (Item-Based):** When a user clicks on a specific product to view it, the system uses natural language processing (TF-IDF vectorization) on the product's description to find other items in the catalog that are structurally similar (using cosine similarity).
 
-### 1. Database Setup
-Ensure you have MySQL installed locally (e.g. via XAMPP or MySQL Workbench). 
-Run the population script to dynamically create the schema `ecommerce_db` and insert products:
-```bash
-python setup_db.py
-```
+## Key Features
+- **Full-Stack Web App:** A clean, modern UI built with HTML/CSS (glassmorphism design) and connected to a Flask Python backend.
+- **MySQL Integration:** Real user accounts with hashed passwords (bcrypt), an interaction history tracker, and a live product catalog.
+- **Automated Data Pipeline:** A script (`setup_db.py`) that extracts over 3,600 real E-commerce products from my trained Pandas model and automatically populates the MySQL database.
+- **Dynamic Dashboard:** A user dashboard that updates its recommendations live based on the user's linked internal ID.
 
-### 2. Start the Server
-```bash
-pip install -r requirements.txt
-python app.py
-```
+## How to Run the Project Locally
 
-Then navigate to `http://localhost:5000` in your web browser. 
-Register a new account (using Customer ID `17850` optionally to test the collaborative engine directly), and begin browsing!
+If you want to test the code on your own machine, follow these steps:
+
+1. **Set up the Database:**
+   Make sure you have a local MySQL server running (like XAMPP or MySQL Workbench) with the credentials `root` and your password. Check `setup_db.py` to ensure the credentials match yours. Run the setup script to build the tables and load the product data:
+   ```bash
+   python setup_db.py
+   ```
+
+2. **Start the Flask Server:**
+   Install the required python libraries and start the server:
+   ```bash
+   pip install -r requirements.txt
+   python app.py
+   ```
+
+3. **Test It Out!**
+   Open your browser and go to `http://localhost:5000`. Create an account, and when asked for an optional Customer ID, type in `17850` to see the collaborative filtering instantly populate your dashboard with historical recommendations!
+
+## Cloud Deployment (AWS)
+The project is built to be production-ready. For a live environment, the codebase can be deployed to an AWS EC2 instance running Gunicorn, while the MySQL connection string is simply swapped out for an AWS RDS endpoint. I've prepared a full cloud migration path in my architecture notes.
