@@ -1,7 +1,6 @@
 __pycache__/
 venv/
 env/
-*.pkl
 *.sqlite3
 .env
 .idea/

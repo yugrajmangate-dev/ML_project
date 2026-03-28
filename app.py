@@ -7,17 +7,18 @@ from recommender import Recommender
 import time
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'yugra_secret_key_123'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'yugra_secret_key_123')
 
-# Database Setup
-DB_USER = "root"
-DB_PASS = "YugraJ@007"
-DB_HOST = "localhost"
-DB_NAME = "ecommerce_db"
+# Database Setup — uses environment variables on cloud, falls back to localhost for local dev
+DB_USER = os.environ.get('DB_USER', 'root')
+DB_PASS = os.environ.get('DB_PASS', 'YugraJ@007')
+DB_HOST = os.environ.get('DB_HOST', 'localhost')
+DB_PORT = os.environ.get('DB_PORT', '3306')
+DB_NAME = os.environ.get('DB_NAME', 'ecommerce_db')
 
 from urllib.parse import quote_plus
 encoded_pass = quote_plus(DB_PASS)
-app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{DB_USER}:{encoded_pass}@{DB_HOST}/{DB_NAME}"
+app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{DB_USER}:{encoded_pass}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -132,4 +133,6 @@ with app.app_context():
     db.create_all()
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+    port = int(os.environ.get('PORT', 5000))
+    debug = os.environ.get('FLASK_ENV') != 'production'
+    app.run(host='0.0.0.0', port=port, debug=debug, use_reloader=False)

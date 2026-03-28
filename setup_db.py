@@ -1,13 +1,15 @@
+import os
 import pymysql
 import pickle
 import pandas as pd
 from sqlalchemy import create_engine
 
-# Database Credentials
-DB_USER = "root"
-DB_PASS = "YugraJ@007"
-DB_HOST = "localhost"
-DB_NAME = "ecommerce_db"
+# Database Credentials — env vars on cloud, defaults for local dev
+DB_USER = os.environ.get('DB_USER', 'root')
+DB_PASS = os.environ.get('DB_PASS', 'YugraJ@007')
+DB_HOST = os.environ.get('DB_HOST', 'localhost')
+DB_PORT = os.environ.get('DB_PORT', '3306')
+DB_NAME = os.environ.get('DB_NAME', 'ecommerce_db')
 
 def setup_database():
     try:
@@ -31,7 +33,7 @@ def setup_database():
         # Step 3: Insert products into MySQL using SQLAlchemy
         from urllib.parse import quote_plus
         encoded_pass = quote_plus(DB_PASS)
-        engine = create_engine(f"mysql+pymysql://{DB_USER}:{encoded_pass}@{DB_HOST}/{DB_NAME}")
+        engine = create_engine(f"mysql+pymysql://{DB_USER}:{encoded_pass}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
         
         # Initialize the actual schema from models so types match exactly
         from app import app, db
