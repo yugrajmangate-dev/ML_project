@@ -39,7 +39,11 @@ If you want to test the code on your own machine, follow these steps:
    python app.py
    ```
 
-3. **Test It Out!**
+3. **Environment variables (recommended):**
+   - Copy `.env.sample` to `.env` and edit the values for your local MySQL credentials and `SECRET_KEY`.
+   - `.env` is listed in `.gitignore` so your credentials will not be committed.
+
+4. **Test It Out!**
    Open your browser and go to `http://localhost:5000`. Create an account, and when asked for an optional Customer ID, type in `17850` to see the collaborative filtering instantly populate your dashboard with historical recommendations!
 
 ## Cloud Deployment (AWS)
