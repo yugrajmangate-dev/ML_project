@@ -8,3 +8,8 @@ flask-login
 flask-bcrypt
 cryptography
 gunicorn
+alembic
+redis
+Flask-Caching
+Flask-Limiter
+pytest

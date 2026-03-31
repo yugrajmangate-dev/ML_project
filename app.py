@@ -66,6 +66,11 @@ def create_app(config_overrides=None):
     # Register API blueprint
     app.register_blueprint(api_bp)
 
+    # Initialize extensions (cache, limiter) and load model
+    from extensions import cache, limiter
+    cache.init_app(app)
+    limiter.init_app(app)
+
     # Load the ML Model once on startup and attach to app for reuse
     with app.app_context():
         logger.info("Loading Recommendation Model... Please wait...")
@@ -73,8 +78,9 @@ def create_app(config_overrides=None):
         app.recommender = Recommender('recommendation_model.pkl')
         logger.info(f"Model loaded in {time.time() - start:.2f} seconds.")
 
-        # Create tables if they do not exist (safe for local/dev only)
-        db.create_all()
+        # NOTE: database schema management is handled via Alembic migrations in production.
+        # If you need a quick local schema bootstrapping for development, run:
+        # python manage_db.py upgrade
 
     @login_manager.user_loader
     def load_user(user_id):

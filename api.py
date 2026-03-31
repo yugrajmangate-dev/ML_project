@@ -1,4 +1,5 @@
 from flask import Blueprint, current_app, jsonify, request
+from extensions import cache, limiter
 
 api_bp = Blueprint('api', __name__, url_prefix='/api')
 
@@ -9,6 +10,8 @@ def health():
 
 
 @api_bp.route('/recommend/collab', methods=['GET'])
+@limiter.limit("20 per minute")
+@cache.cached(timeout=60, query_string=True)
 def recommend_collab():
     """Return collaborative recommendations for a given customer_id.
 
@@ -17,7 +20,11 @@ def recommend_collab():
     - n: number of recommendations (default 5)
     """
     customer_id = request.args.get('customer_id')
-    n = int(request.args.get('n', 5))
+    try:
+        n = int(request.args.get('n', 5))
+    except Exception:
+        n = 5
+
     if not customer_id:
         return jsonify({'error': 'customer_id is required'}), 400
 
@@ -29,6 +36,8 @@ def recommend_collab():
 
 
 @api_bp.route('/recommend/content', methods=['GET'])
+@limiter.limit("40 per minute")
+@cache.cached(timeout=60, query_string=True)
 def recommend_content():
     """Return content-based recommendations for a product query.
 
@@ -37,7 +46,11 @@ def recommend_content():
     - n: number of recommendations (default 5)
     """
     q = request.args.get('q')
-    n = int(request.args.get('n', 5))
+    try:
+        n = int(request.args.get('n', 5))
+    except Exception:
+        n = 5
+
     if not q:
         return jsonify({'error': 'q (query) is required'}), 400
 
