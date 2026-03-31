@@ -1,0 +1,9 @@
+__pycache__/
+venv/
+env/
+.env
+*.pyc
+*.pkl
+*.sqlite3
+.git
+.gitignore
