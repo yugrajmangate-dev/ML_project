@@ -1,50 +1,48 @@
 # E-Commerce Product Recommendation Engine
+## E-Commerce Recommendation Service — Production-ready Starter
 
-Hi everyone! This is my project for building an E-Commerce Recommendation System. The goal was to build a system that actively suggests products to users based on their personal browsing history and preferences. 
+This repository contains a hybrid recommendation engine and a simple web UI built with Flask. It is designed as a practical, production-ready codebase that can be extended for real-world use.
 
-## Problem Statement
-The assignment required building a recommendation engine that dynamically suggests products to users. The required tech stack was:
-- Python
-- Flask / Django (I went with Flask!)
-- MySQL
-- Scikit-learn
-- AWS / GCP
+Core idea
+- Hybrid recommender:
+  - Collaborative filtering (user-based) — recommends items based on similar users' behavior.
+  - Content-based filtering — item similarity computed with TF-IDF over product descriptions and cosine similarity.
 
-## What I Built
-To solve this, I designed a **Hybrid Recommendation Engine** that uses two different machine learning approaches to cover all bases:
+What this repo provides
+- Web application with user auth, product browsing, and a dashboard that surfaces personalized recommendations.
+- A versioned model artifact (`recommendation_model.pkl`) used by the `Recommender` class.
+- Scripts and utilities to populate a MySQL database (`setup_db.py`).
+- Dockerfile and `docker-compose.yml` for local parity and easier deployment.
+- JSON API endpoints for programmatic recommendations (`/api/recommend/collab`, `/api/recommend/content`) and a `/api/health` endpoint.
 
-1. **Collaborative Filtering (User-Based):** When a user logs in, the system checks their purchase history in the MySQL database and compares it against a matrix of other users. If "User A" is similar to the logged-in user, the system recommends things "User A" bought that the logged-in user hasn't seen yet.
-2. **Content-Based Filtering (Item-Based):** When a user clicks on a specific product to view it, the system uses natural language processing (TF-IDF vectorization) on the product's description to find other items in the catalog that are structurally similar (using cosine similarity).
+Quickstart (local, development)
+1. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+2. Optional: populate a local MySQL instance (this will DROP and recreate the database named in `DB_NAME`):
+```bash
+# Edit .env or set DB_* environment variables first
+python setup_db.py
+```
+3. Start the app (development):
+```bash
+python app.py
+# OR using Docker
+docker-compose up --build
+```
+4. Open `http://localhost:5000` and register a user. To trigger collaborative recommendations immediately, optionally set the `Customer ID` field on the user profile to a known ID (for example `17850`) from the dataset.
 
-## Key Features
-- **Full-Stack Web App:** A clean, modern UI built with HTML/CSS (glassmorphism design) and connected to a Flask Python backend.
-- **MySQL Integration:** Real user accounts with hashed passwords (bcrypt), an interaction history tracker, and a live product catalog.
-- **Automated Data Pipeline:** A script (`setup_db.py`) that extracts over 3,600 real E-commerce products from my trained Pandas model and automatically populates the MySQL database.
-- **Dynamic Dashboard:** A user dashboard that updates its recommendations live based on the user's linked internal ID.
+API examples
+- Collaborative recommendations:
+  - GET `/api/recommend/collab?customer_id=17850&n=8`
+- Content recommendations:
+  - GET `/api/recommend/content?q=85048&n=5`
 
-## How to Run the Project Locally
+Recommended next steps for production hardening
+- Replace `db.create_all()` with Alembic migrations and use a managed RDS instance.
+- Add Redis caching for recommendation results and rate-limiting on the API.
+- Run the app with Gunicorn behind a reverse proxy (Nginx) and enable TLS.
+- Add CI to run unit and integration tests and build/publish container images.
 
-If you want to test the code on your own machine, follow these steps:
-
-1. **Set up the Database:**
-   Make sure you have a local MySQL server running (like XAMPP or MySQL Workbench) with the credentials `root` and your password. Check `setup_db.py` to ensure the credentials match yours. Run the setup script to build the tables and load the product data:
-   ```bash
-   python setup_db.py
-   ```
-
-2. **Start the Flask Server:**
-   Install the required python libraries and start the server:
-   ```bash
-   pip install -r requirements.txt
-   python app.py
-   ```
-
-3. **Environment variables (recommended):**
-   - Copy `.env.sample` to `.env` and edit the values for your local MySQL credentials and `SECRET_KEY`.
-   - `.env` is listed in `.gitignore` so your credentials will not be committed.
-
-4. **Test It Out!**
-   Open your browser and go to `http://localhost:5000`. Create an account, and when asked for an optional Customer ID, type in `17850` to see the collaborative filtering instantly populate your dashboard with historical recommendations!
-
-## Cloud Deployment (AWS)
-The project is built to be production-ready. For a live environment, the codebase can be deployed to an AWS EC2 instance running Gunicorn, while the MySQL connection string is simply swapped out for an AWS RDS endpoint. I've prepared a full cloud migration path in my architecture notes.
+If you want, I will next refactor the codebase to add Alembic migrations, implement Redis caching, and create a GitHub Actions CI pipeline. Tell me which to prioritize.
